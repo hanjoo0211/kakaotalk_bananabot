@@ -496,14 +496,62 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
     }
   }
 
+  // 나무위키 1번 항목 크롤링
+  if (msg.indexOf("?위키") == 0) {
+    try {
+      // 검색 내용 구글에 검색
+      var toSearch = msg.replace(/\?위키 /, "");
+      var toSearchUrl = toSearch.replace(/ /g, "%20");
+      var searchLink = "https://www.google.com/search?q=" + "나무위키%20" + toSearchUrl;
+
+      // 나무위키 링크 생성
+      var googleHtml = org.jsoup.Jsoup.connect(searchLink).get().html();
+      var namuData = googleHtml.match(/namu\.wiki\/w\/.+" ping/);
+      var namuLink = "https://" + String(namuData).replace(/" ping/,"");
+      var namuRawLink = namuLink.replace(/\/w\//,"/raw/");
+
+      // 나무위키 제목/첫문단용 소스코드
+      var namuHtml = org.jsoup.Jsoup.connect(namuLink).get().html();
+      var namuRawHtml = org.jsoup.Jsoup.connect(namuRawLink).get().html();
+
+      // 문서 제목
+      var namuTitleData = namuHtml.match(/<title>.+<\/title>/);
+      var namuTitle = String(namuTitleData).replace(/<title>/,"").replace(/<\/title>/,"").replace(/ - 나무위키/,"");
+
+      // 문서 첫 문단
+      var namuFirstTitle = namuRawHtml.split("==")[1].trim();
+      var namuFirstContent = namuRawHtml.split("==")[2];
+
+      // 나무위키 문법 다듬기
+      namuFirstContent = namuFirstContent.replace(/\[\[http.+?\|#*/g,""); // 링크 삭제
+      namuFirstContent = namuFirstContent.replace(/\[\[[^\]]+\|/g,""); // 링크와 텍스트가 다른 하이퍼링크 자르기
+      namuFirstContent = namuFirstContent.replace(/\[\[/g,"").replace(/\]\]/g,""); // 하이퍼링크 풀기
+      namuFirstContent = namuFirstContent.replace(/\[\*.+?\]/g,""); // 주석 삭제
+      namuFirstContent = namuFirstContent.replace(/~~.+?~~/g,"").replace(/--.+?--/g,""); // 취소선 삭제
+      namuFirstContent = namuFirstContent.replace(/'''/g,""); // 굵음 제거
+      namuFirstContent = namuFirstContent.replace(/\|[^\|]+\|/g,"").replace(/\|/g,""); // 표, 사진 등 삭제
+      namuFirstContent = namuFirstContent.replace(/\[br\]/g,"\n"); // 엔터 활성화
+      namuFirstContent = namuFirstContent.replace(/&\w+;/g,""); // 인용 제거
+      namuFirstContent = namuFirstContent.replace(/\[YouTube[^\]]+\]/g,""); // 유튜브 제거
+      namuFirstContent = namuFirstContent.replace(/{{{.\d/g,"").replace(/}}}/g,""); // 글자 크기 제거
+      namuFirstContent = namuFirstContent.replace(/width=\d+/g,""); // width 제거
+      namuFirstContent = namuFirstContent.trim();
+
+      replier.reply("🔍 나무위키 '" + namuTitle + "' 검색 결과\n\n✔ " + namuFirstTitle + "\n\n" + namuFirstContent);
+    
+    }catch (error) {
+      replier.reply("검색하지 못했습니다.");
+    }
+  }
+
   // 기본 틀
   /*
   if (msg.indexOf("?명령어") == 0) {
-    try {
+    //try {
       
-    } catch (error) {
-      replier.reply("오류 메시지");
-    }
+    //} catch (error) {
+    //  replier.reply("오류 메시지");
+    //}
   }
   */
 
