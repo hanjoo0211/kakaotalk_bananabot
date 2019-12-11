@@ -563,6 +563,7 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
 
 }
 
+// 조사 변환 함수
 function Josa(txt, josa)
 {
 	var code = txt.charCodeAt(txt.length-1) - 44032;
