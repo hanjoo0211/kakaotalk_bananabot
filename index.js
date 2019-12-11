@@ -438,8 +438,8 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
       var dcLink = googleHtml.match(/gall.dcinside.com\/\/*\w*\/*board\/lists\?*id=\w+"/); // 보통 갤러리
       var dcId = String(dcLink).replace(/gall.dcinside.com\/\/*\w*\/*board\/lists\?id=/, "").replace(/"/, "");
       if (dcId == "null") {
-        dcLink = googleHtml.match(/gall.dcinside.com\/\/*\w*\/*board\/lists\/\?id=\w+&amp;page/); // url 끝에 페이지 수가 달려있는 경우
-        dcId = String(dcLink).replace(/gall.dcinside.com\/\/*\w*\/*board\/lists\/\?id=/, "").replace(/&amp;page/, "");
+        dcLink = googleHtml.match(/gall.dcinside.com\/\/*\w*\/*board\/lists\/\?id=\w+&/); // url 끝에 페이지 수가 달려있는 경우
+        dcId = String(dcLink).replace(/gall.dcinside.com\/\/*\w*\/*board\/lists\/\?id=/, "").replace(/&/, "");
         if (dcId == "null") {
           dcLink = googleHtml.match(/m.dcinside.com\/\/*\w*\/*board\/\w+\/\d+/); // 갤러리 id를 게시물에서 가져올 경우
           dcId = String(dcLink).replace(/m.dcinside.com\/\/*\w*\/*board\//, "").replace(/\/\d+/, "");
@@ -463,17 +463,22 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
 
       // 페이지 랜덤
       var pageNum = Math.floor(Math.random() * pgEnd + 1);
-      var data = org.jsoup.Jsoup.connect("https://gall.dcinside.com/board/lists/?id=" + dcId + "&page=" + pageNum + "&exception_mode=recommend").get().html();
+      
       if (isMgallery == "mgallery") {
         data = org.jsoup.Jsoup.connect("https://gall.dcinside.com/mgallery/board/lists/?id=" + dcId + "&page=" + pageNum + "&exception_mode=recommend").get().html();
+      }
+      else{
+        data = org.jsoup.Jsoup.connect("https://gall.dcinside.com/board/lists/?id=" + dcId + "&page=" + pageNum + "&exception_mode=recommend").get().html();
       }
       data2 = data.match(/"gall_num">\d{1,7}/g);
 
       // 글 랜덤
       var postNum = Math.floor(Math.random() * data2.length);
-      data3 = "gall.dcinside.com/board/view/?id=" + dcId + "&no=" + String(data2[postNum]).replace(/"gall_num">/, "");
       if (isMgallery == "mgallery") {
         data3 = "gall.dcinside.com/mgallery/board/view/?id=" + dcId + "&no=" + String(data2[postNum]).replace(/"gall_num">/, ""); // 랜덤글 링크
+      }
+      else{
+        data3 = "gall.dcinside.com/board/view/?id=" + dcId + "&no=" + String(data2[postNum]).replace(/"gall_num">/, "");
       }
 
       // 갤러리 이름 크롤링
