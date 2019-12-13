@@ -543,9 +543,11 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
       var searchLink = "https://search.naver.com/search.naver?query=" + searchAreaUrl + "%20미세먼지";
 
       var naverText = org.jsoup.Jsoup.connect(searchLink).get().text();
+      var areaData = naverText.match(/대기오염정보 .+? 대기오염/);
       var pm10Data = naverText.match(/에어코리아 미세먼지 현재\d+/);
       var pm25Data = naverText.match(/초미세먼지 [가-힣]+ \d+㎍\/㎥ 오존/);
 
+      var area = String(areaData).replace(/대기오염정보 /,"").replace(/ 대기오염/,"");
       var pm10 = String(pm10Data).replace(/에어코리아 미세먼지 현재/,"");
       var pm25 = String(pm25Data).replace(/초미세먼지 [가-힣]+ /,"").replace(/㎍\/㎥ 오존/,"");
 
@@ -601,7 +603,7 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
         pm25State = "최고 좋음😆";
       }
       
-      var toReply = "🌁 '" + searchArea + "' 미세먼지 정보입니다.\n\n미세먼지: " + pm10 + "㎍/㎥ " + pm10State + "\n초미세먼지: "+ pm25 + "㎍/㎥ " + pm25State;
+      var toReply = "🌁 '" + area + "' 미세먼지 정보입니다.\n\n미세먼지: " + pm10 + "㎍/㎥ " + pm10State + "\n초미세먼지: "+ pm25 + "㎍/㎥ " + pm25State;
       if(pm10 == "null"){
         toReply = "🤔 해당 지역을 검색하지 못했어요. 더 자세히 검색해보는건 어떨까요?\n\nex) 안암동, 용현1동, 을왕리";
       }
