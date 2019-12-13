@@ -584,6 +584,10 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
     replier.reply("22.9cm");
   }
 
+  if (msg == "?이현국적") {
+    replier.reply("🇺🇸 이 새끼는 순도 100% 양키놈입니다.");
+  }
+
   if (msg == "?사랑해") {
     replier.reply("(하트)");
   }
@@ -591,13 +595,31 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
   if (msg == "?톡방") {
     replier.reply(room);
   }
-  /*
-  if(msg.indexOf("실검") !== -1){
-  var data = Utils.getWebText("http://datalab.naver.com/keyword/realtimeList.naver?groupingLevel=0&marketing=-2");
-  data2 = data.split("조회하기")[1].split("이용약관")[0];
-  replier.reply(data);
+  
+  // 맞춤법 꼽주기
+  if (msg.indexOf("됬") !== -1) {
+    var toReply = ""
+    for(i=0; i<36; i++){
+      toReply += "됐"
+    }
+    replier.reply(toReply);
   }
-  */
+
+  if (msg.indexOf("됌") !== -1) {
+    var toReply = ""
+    for(i=0; i<36; i++){
+      toReply += "됨"
+    }
+    replier.reply(toReply);
+  }
+
+  if (msg.indexOf("됀") !== -1) {
+    var toReply = ""
+    for(i=0; i<36; i++){
+      toReply += "된"
+    }
+    replier.reply(toReply);
+  }
 
 
 }
