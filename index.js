@@ -378,34 +378,18 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
 
   // 네이버 실시간 검색순위
   if (msg == "?실검") {
-    // 현재시간
-    var d = new Date();
-    // 오전 오후 표시
-    var ampm = "오후 ";
-    var hour = d.getHours();
-    if (hour < 12) {
-      ampm = "오전 ";
-    }
-    else if (hour > 12) {
-      hour -= 12;
-    }
-
-    var data = org.jsoup.Jsoup.connect("https://datalab.naver.com/keyword/realtimeList.naver?groupingLevel=0&marketing=-2&where=main").get().text();
-    data2 = data.split("조회하기")[1].split("이용약관")[0].replace(/\d\d\d\d.\d\d\.\d\d/g, "").replace(/ . ~ . . ~ . /, "");
+    var rankHtml = org.jsoup.Jsoup.connect("https://datalab.naver.com/keyword/realtimeList.naver?groupingLevel=0&marketing=-2&where=main").get().html();
+    rankData = rankHtml.split("조회하기")[1].split("이용약관")[0].replace(/\d\d\d\d.\d\d\.\d\d/g, "").replace(/ . ~ . . ~ . /, "");
 
     var searchRank = new Array();
+    var rankListData = rankData.match(/item_title">.+?<\/span>/g);
+    var result = "";
     for (i = 0; i < 20; i++) {
-      searchRank.push(data2.split(String(20 - i))[1].trim());
-      data2 = data2.split(String(20 - i))[0];
+      searchRank.push(String(rankListData[i]).replace("item_title\">","").replace("</span>",""));
+      result = result + "\n" + String(i + 1) + " " + searchRank[i];
     }
-    searchRank.reverse();
-
-    result = "";
-    for (i = 0; i < 19; i++) {
-      result = result + String(i + 1) + " " + searchRank[i] + "\n";
-    }
-    result = result + "20 " + searchRank[19];
-    replier.reply("🔍 네이버 실시간 급상승 검색어\n" + d.getFullYear() + "년 " + (d.getMonth() + 1) + "월 " + d.getDate() + "일 " + ampm + hour + "시 " + d.getMinutes() + "분\n\n" + result);
+    
+    replier.reply("🔍 네이버 실시간 급상승 검색어\n" + nowTime() + "\n" + result);
   }
 
   // 옃갤 랜덤개념글
@@ -614,6 +598,22 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
   */
 
 
+}
+
+// 현재시간 함수
+function nowTime(){
+  // 현재시간
+  var d = new Date();
+  // 오전 오후 표시
+  var ampm = "오후 ";
+  var hour = d.getHours();
+  if (hour < 12) {
+    ampm = "오전 ";
+  }
+  else if (hour > 12) {
+    hour -= 12;
+  }
+  return (d.getFullYear() + "년 " + (d.getMonth() + 1) + "월 " + d.getDate() + "일 " + ampm + hour + "시 " + d.getMinutes() + "분");
 }
 
 // 조사 변환 함수
