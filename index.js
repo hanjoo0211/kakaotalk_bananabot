@@ -47,6 +47,7 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
   \n\n\?네이버 <검색대상>\n네이버에서 검색합니다.\
   \n\n\?구글 <검색대상>\n구글에서 검색합니다.\
   \n\n\?나무위키 <검색대상>\n나무위키에서 검색합니다.\
+  \n\n\?위키 <검색대상>\n구글 검색을 통해 나무위키에서 검색한 내용의 첫 문단을 그대로 출력합니다.\
   \n\n\?유튜브 <검색대상>\n유튜브에서 검색합니다.\
   \n\n\?트위터 <검색대상>\n구글 검색을 통해 트위터에서 검색합니다.\
   \n\n\?인스타 <검색대상>\n구글 검색을 통해 인스타그램에서 검색합니다.\
@@ -388,7 +389,7 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
       searchRank.push(String(rankListData[i]).replace("item_title\">","").replace("</span>",""));
       result = result + "\n" + String(i + 1) + " " + searchRank[i];
     }
-    
+
     replier.reply("🔍 네이버 실시간 급상승 검색어\n" + nowTime() + "\n" + result);
   }
 
@@ -480,7 +481,7 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
     }
   }
 
-  // 나무위키 1번 항목 크롤링
+  // 나무위키 1번 문단 크롤링
   if (msg.indexOf("?위키") == 0) {
     try {
       // 검색 내용 구글에 검색
@@ -516,9 +517,10 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
       namuFirstContent = namuFirstContent.replace(/\|[^\|]+\|/g,"").replace(/\|/g,""); // 표, 사진 등 삭제
       namuFirstContent = namuFirstContent.replace(/\[br\]/g,"\n"); // 엔터 활성화
       namuFirstContent = namuFirstContent.replace(/&\w+;/g,""); // 인용 제거
-      namuFirstContent = namuFirstContent.replace(/\[YouTube[^\]]+\]/g,""); // 유튜브 제거
+      namuFirstContent = namuFirstContent.replace(/\[YouTube[^\]]+\]/gi,""); // 유튜브 제거
+      namuFirstContent = namuFirstContent.replace(/\[include.+?\]/g,""); // include 제거
       namuFirstContent = namuFirstContent.replace(/{{{.\d/g,"").replace(/}}}/g,""); // 글자 크기 제거
-      namuFirstContent = namuFirstContent.replace(/width=\d+/g,""); // width 제거
+      namuFirstContent = namuFirstContent.replace(/width=\d+/g,"").replace(/height=\d+/g,""); // width, height 제거
       namuFirstContent = namuFirstContent.trim();
 
       replier.reply("🔍 나무위키 '" + namuTitle + "' 검색 결과\n\n✔ " + namuFirstTitle + "\n\n" + namuFirstContent);
