@@ -46,6 +46,7 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
   \n\n?롤충 <소환사명>\n롤 전적검색 텍스트\
   \n\n?네이버 <검색대상>\n네이버에서 검색합니다.\
   \n\n?구글 <검색대상>\n구글에서 검색합니다.\
+  \n\n?짤 <검색대상>\n구글에서 검색해서 랜덤 이미지 링크를 출력합니다.\
   \n\n?나무위키 <검색대상>\n나무위키에서 검색합니다.\
   \n\n?위키 <검색대상>\n구글 검색을 통해 나무위키에서 검색한 내용의 첫 문단을 그대로 출력합니다.\
   \n\n?유튜브 <검색대상>\n유튜브에서 검색합니다.\
@@ -110,10 +111,7 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
     var ggoorrHtml = org.jsoup.Jsoup.connect("http://ggoorr.net/index.php?mid=ao&page=" + pageNum).get().html();
     var ggoorrData = ggoorrHtml.match(/"https:\/\/ggoorr.net\/index.php\?mid=ao&amp;page=\d+&amp;document_srl=\d+"/g);
     
-    //var data = Utils.getWebText("http://ggoorr.net/index.php?mid=ao&page=" + pageNum);
     //data2 = data.split("리스트 상단 광고 끝")[1].split("BEST 게시물")[0].replace(/<[^>]+>/g,"").trim();
-    //data2 = data.split("리스트 상단 광고 끝")[1].split("BEST 게시물")[0]
-    //data3 = data2.match(/srl=\d\d\d\d\d\d\d/g);
 
     var postNum = Math.floor(Math.random() * ggoorrData.length);
     var ggoorrNum = ggoorrData[postNum].replace(/"https:\/\/ggoorr.net\/index.php\?mid=ao&amp;page=\d+&amp;document_srl=/,"").replace(/"/,"");
@@ -614,6 +612,23 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
       replier.reply(toReply);
     } catch (error) {
       replier.reply("🤔 해당 지역을 검색하지 못했어요. 더 자세히 검색해보는건 어떨까요?\n\nex) 안암동, 용현1동, 을왕리");
+    }
+  }
+
+  // 구글 이미지 검색
+  if (msg.indexOf("?짤 ") == 0) {
+    try {
+      var toSearch = msg.replace(/\?짤 /, "");
+      var toSearchUrl = toSearch.replace(/ /g, "%20");
+      var searchLink = "https://www.google.com/search?q="+ toSearchUrl + "&tbm=isch";
+
+      var imageData = org.jsoup.Jsoup.connect(searchLink).get().html().match(/"ru":".+?"/g); // ou는 이미지 링크, ru는 게시글 링크
+      var imageNum = Math.floor(Math.random() * imageData.length);
+      var resultImage = imageData[imageNum].replace(/"ru":"/,"").replace(/"/,"").replace(/https:\/\//,"");
+
+      replier.reply("🎲 구글 '" + toSearch + "' 이미지 검색 결과\n\n" + resultImage);
+    } catch (error) {
+      replier.reply("검색하지 못했습니다.");
     }
   }
 
