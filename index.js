@@ -42,27 +42,28 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
   // 기능 알림
   if ((msg == "?바나나") || (msg == "?명령어")) {
     replier.reply("※명령어 목록 " + "\u200b".repeat(501) + "\
-  \n\n\?롤 <소환사명>\n롤 전적검색 op.gg 링크\
-  \n\n\?롤충 <소환사명>\n롤 전적검색 텍스트\
-  \n\n\?네이버 <검색대상>\n네이버에서 검색합니다.\
-  \n\n\?구글 <검색대상>\n구글에서 검색합니다.\
-  \n\n\?나무위키 <검색대상>\n나무위키에서 검색합니다.\
-  \n\n\?위키 <검색대상>\n구글 검색을 통해 나무위키에서 검색한 내용의 첫 문단을 그대로 출력합니다.\
-  \n\n\?유튜브 <검색대상>\n유튜브에서 검색합니다.\
-  \n\n\?트위터 <검색대상>\n구글 검색을 통해 트위터에서 검색합니다.\
-  \n\n\?인스타 <검색대상>\n구글 검색을 통해 인스타그램에서 검색합니다.\
-  \n\n\?인별 <검색대상>\n인스타 게시물 중 최근 게시물을 가져옵니다.\
-  \n\n\?랜덤인별 <검색대상>\n인스타 게시물 중 랜덤 게시물을 가져옵니다.\
-  \n\n\#인별 <검색대상>\n인스타그램에서 해당 해시태그의 게시물 중 최근 게시물을 가져옵니다.\
-  \n\n\#랜덤인별 <검색대상>\n인스타그램에서 해당 해시태그의 게시물 중 랜덤 게시물을 가져옵니다.\
-  \n\n\?계산퀴즈\n덧셈 및 곱셈 퀴즈를 냅니다. 바로 맞춰주세요.\
-  \n\n\?실검\n현재 네이버 실시간 급상승 검색어를 20위까지 알려드립니다.\
-  \n\n\?<디씨갤러리>갤\n해당 갤러리 개념글 중 랜덤 게시물을 가져옵니다.\n구글 검색을 통해 갤러리 약자도 검색 가능합니다.\n이전 갤러리, 마이너 갤러리까지 구현되어 있습니다.\
+  \n\n?롤 <소환사명>\n롤 전적검색 op.gg 링크\
+  \n\n?롤충 <소환사명>\n롤 전적검색 텍스트\
+  \n\n?네이버 <검색대상>\n네이버에서 검색합니다.\
+  \n\n?구글 <검색대상>\n구글에서 검색합니다.\
+  \n\n?나무위키 <검색대상>\n나무위키에서 검색합니다.\
+  \n\n?위키 <검색대상>\n구글 검색을 통해 나무위키에서 검색한 내용의 첫 문단을 그대로 출력합니다.\
+  \n\n?유튜브 <검색대상>\n유튜브에서 검색합니다.\
+  \n\n?트위터 <검색대상>\n구글 검색을 통해 트위터에서 검색합니다.\
+  \n\n?인스타 <검색대상>\n구글 검색을 통해 인스타그램에서 검색합니다.\
+  \n\n?인별 <검색대상>\n인스타 게시물 중 최근 게시물을 가져옵니다.\
+  \n\n?랜덤인별 <검색대상>\n인스타 게시물 중 랜덤 게시물을 가져옵니다.\
+  \n\n#인별 <검색대상>\n인스타그램에서 해당 해시태그의 게시물 중 최근 게시물을 가져옵니다.\
+  \n\n#랜덤인별 <검색대상>\n인스타그램에서 해당 해시태그의 게시물 중 랜덤 게시물을 가져옵니다.\
+  \n\n?계산퀴즈\n덧셈 및 곱셈 퀴즈를 냅니다. 바로 맞춰주세요.\
+  \n\n?실검\n현재 네이버 실시간 급상승 검색어를 20위까지 알려드립니다.\
+  \n\n?<디씨갤러리>갤\n해당 갤러리 개념글 중 랜덤 게시물을 가져옵니다.\n구글 검색을 통해 갤러리 약자도 검색 가능합니다.\n이전 갤러리, 마이너 갤러리까지 구현되어 있습니다.\
   \nex)\n?옃갤 - 걸그룹 여자친구 갤러리\n?닌텐도 스위치 갤 - 닌텐도 스위치 마이너 갤러리\
-  \n\n\?한강\n현재 한강 수온을 알려드립니다.\
-  \n\n\?올려 (횟수) \n⬆ 채팅창을 올려드립니다. (최대 15회)\
-  \n\n\?한국시간\n한국의 현재 시각을 알려드립니다.\
-  \n\n\?이현시간\n이현의 현재 시각을 알려드립니다.\
+  \n\n?미세먼지/미먼 <검색지역>\n현재 미세먼지 상태를 알려드립니다.\
+  \n\n?한강\n현재 한강 수온을 알려드립니다.\
+  \n\n?올려 (횟수) \n⬆ 채팅창을 올려드립니다. (최대 15회)\
+  \n\n?한국시간\n한국의 현재 시각을 알려드립니다.\
+  \n\n?이현시간\n이현의 현재 시각을 알려드립니다.\
   \n\n?ㅗㅜㅑ\n🔞 ㅗ..ㅗㅜㅑ..");
   }
 
@@ -530,6 +531,87 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
     }
   }
 
+  if ((msg.indexOf("?미세먼지") == 0) || (msg.indexOf("?미먼") == 0)) {
+    try {
+      if((msg == "?미세먼지") || (msg == "?미먼")){
+        var searchArea = "반포동";
+      }
+      else{
+        var searchArea = msg.replace(/\?미세먼지 /, "").replace(/\?미먼 /, "");
+      }
+      var searchAreaUrl = searchArea.replace(/ /g, "%20");
+      var searchLink = "https://search.naver.com/search.naver?query=" + searchAreaUrl + "%20미세먼지";
+
+      var naverText = org.jsoup.Jsoup.connect(searchLink).get().text();
+      var pm10Data = naverText.match(/에어코리아 미세먼지 현재\d+/);
+      var pm25Data = naverText.match(/초미세먼지 [가-힣]+ \d+㎍\/㎥ 오존/);
+
+      var pm10 = String(pm10Data).replace(/에어코리아 미세먼지 현재/,"");
+      var pm25 = String(pm25Data).replace(/초미세먼지 [가-힣]+ /,"").replace(/㎍\/㎥ 오존/,"");
+
+      // 미세먼지 기준
+      if(pm10 > 150){
+        pm10State = "최악🤮";
+      }
+      else if(pm10 > 100){
+        pm10State = "매우 나쁨😷";
+      }
+      else if(pm10 > 75){
+        pm10State = "상당히 나쁨😣";
+      }
+      else if(pm10 > 50){
+        pm10State = "나쁨🙁";
+      }
+      else if(pm10 > 40){
+        pm10State = "보통😑";
+      }
+      else if(pm10 > 30){
+        pm10State = "양호🙂";
+      }
+      else if(pm10 > 15){
+        pm10State = "좋음😄";
+      }
+      else if(pm10 > 0){
+        pm10State = "최고 좋음😆";
+      }
+
+      // 초미세먼지 기준
+      if(pm25 > 75){
+        pm25State = "최악🤮";
+      }
+      else if(pm25 > 50){
+        pm25State = "매우 나쁨😷";
+      }
+      else if(pm25 > 37){
+        pm25State = "상당히 나쁨😣";
+      }
+      else if(pm25 > 25){
+        pm25State = "나쁨🙁";
+      }
+      else if(pm25 > 20){
+        pm25State = "보통😑";
+      }
+      else if(pm25 > 15){
+        pm25State = "양호🙂";
+      }
+      else if(pm25 > 8){
+        pm25State = "좋음😄";
+      }
+      else if(pm25 > 0){
+        pm25State = "최고 좋음😆";
+      }
+      
+      var toReply = "🌁 '" + searchArea + "' 미세먼지 정보입니다.\n\n미세먼지: " + pm10 + "㎍/㎥ " + pm10State + "\n초미세먼지: "+ pm25 + "㎍/㎥ " + pm25State;
+      if(pm10 == "null"){
+        toReply = "🤔 해당 지역을 검색하지 못했어요. 더 자세히 검색해보는건 어떨까요?\n\nex) 안암동, 용현1동, 을왕리";
+      }
+
+      replier.reply(toReply);
+    } catch (error) {
+      replier.reply("🤔 해당 지역을 검색하지 못했어요. 더 자세히 검색해보는건 어떨까요?\n\nex) 안암동, 용현1동, 을왕리");
+    }
+  }
+
   // 기본 틀
   /*
   if (msg.indexOf("?명령어") == 0) {
@@ -540,6 +622,8 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
     //}
   }
   */
+
+  //// 비공개
 
   if ((msg == "야 바나나") || (msg == "야 꿀벌")) {
     replier.reply("https://image.dcinside.com/viewimagePop.php?id=21b8d121f0d737a062bad1b018d5376e&no=24b0d769e1d32ca73ced84fa11d0283162f18dd5505eb28abfc2607ab76a7bd3d937bdb559ba1ae55d0a9992a9c71453a5dba38a5f67907125fef765153d642b9602dad8d659c8ebb94de1ad76891f17ed23a25b464a651ff7d01c30011a6b4aa3fbcd97fc1e8779f978d1736b1a15c91f4bbe");
@@ -594,6 +678,10 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
 
   if (msg == "?톡방") {
     replier.reply(room);
+  }
+
+  if (msg.indexOf("돼지새끼") !== -1) {
+    replier.reply(sender + " 돼지새끼");
   }
   
   // 맞춤법 꼽주기
