@@ -107,15 +107,18 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
   if (msg == "?ㅗㅜㅑ") {
     var pageNum = Math.floor(Math.random() * 1380 + 1);
 
-    var data = Utils.getWebText("http://ggoorr.net/index.php?mid=ao&page=" + pageNum);
+    var ggoorrHtml = org.jsoup.Jsoup.connect("http://ggoorr.net/index.php?mid=ao&page=" + pageNum).get().html();
+    var ggoorrData = ggoorrHtml.match(/"https:\/\/ggoorr.net\/index.php\?mid=ao&amp;page=\d+&amp;document_srl=\d+"/g);
+    
+    //var data = Utils.getWebText("http://ggoorr.net/index.php?mid=ao&page=" + pageNum);
     //data2 = data.split("리스트 상단 광고 끝")[1].split("BEST 게시물")[0].replace(/<[^>]+>/g,"").trim();
-    data2 = data.split("리스트 상단 광고 끝")[1].split("BEST 게시물")[0]
-    data3 = data2.match(/srl=\d\d\d\d\d\d\d/g);
+    //data2 = data.split("리스트 상단 광고 끝")[1].split("BEST 게시물")[0]
+    //data3 = data2.match(/srl=\d\d\d\d\d\d\d/g);
 
-    var postNum = Math.floor(Math.random() * data3.length);
-    result = data3[postNum].replace(/srl=/, "");
+    var postNum = Math.floor(Math.random() * ggoorrData.length);
+    var ggoorrNum = ggoorrData[postNum].replace(/"https:\/\/ggoorr.net\/index.php\?mid=ao&amp;page=\d+&amp;document_srl=/,"").replace(/"/,"");
 
-    replier.reply("🔞 ㅗ..ㅗㅜㅑ..\n\nhttps://ggoorr.net/ao/" + result);
+    replier.reply("🔞 ㅗ..ㅗㅜㅑ..\n\nhttps://ggoorr.net/ao/" + ggoorrNum);
   }
 
   // 롤 전적검색
