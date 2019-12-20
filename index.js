@@ -64,6 +64,7 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
   \n\n?올려 (횟수) \n⬆ 채팅창을 올려드립니다. (최대 15회)\
   \n\n?한국시간\n한국의 현재 시각을 알려드립니다.\
   \n\n?이현시간\n이현의 현재 시각을 알려드립니다.\
+  \n\n?푸키먼 <검색대상>\n해당 포켓몬의 타입과 방어상성을 알려드립니다.\
   \n\n?ㅗㅜㅑ\n🔞 ㅗ..ㅗㅜㅑ..");
   }
 
@@ -632,6 +633,55 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
     }
   }
   */
+
+  // 포켓몬 상성
+  if (msg.indexOf("?푸키먼") == 0) {
+    try {
+      // 검색할 포켓몬
+      var toSearch = msg.replace(/\?푸키먼 /, "");
+      var toSearchUrl = toSearch.replace(/ /g, "%20");
+      var searchLink = "https://pokemon.fandom.com/ko/wiki/" + toSearchUrl;
+
+      // 포켓몬 위키 연결
+      var pokemonWikiText = org.jsoup.Jsoup.connect(searchLink).get().text();
+
+      // 포켓몬 타입
+      var pokemonTypeData = pokemonWikiText.match(/\S+타입 포켓몬,/g);
+      var pokemonType = String(pokemonTypeData).replace(/타입 포켓몬,/g,"").replace(/,/,", ");
+
+      // 방어 상성
+      var attackType = pokemonWikiText.match(/\S+ (\d|0.5)+×/g);
+      var attackTypeArray = new Array(Array(), Array(), Array(), Array(), Array());
+
+      for(var i=0; i<18; i++){
+        var typeName = String(attackType[i].match(/[가-힣]+ /)).replace(/ /,"");
+        var typeCoeff = attackType[i].match(/ (\d|0.5)×/)[1];
+        if(typeCoeff == "4"){
+          attackTypeArray[0].push(typeName);
+        }
+        else if(typeCoeff == "2"){
+          attackTypeArray[1].push(typeName);
+        }
+        else if(typeCoeff == "1"){
+          attackTypeArray[2].push(typeName);
+        }
+        else if(typeCoeff == "0.5"){
+          attackTypeArray[3].push(typeName);
+        }
+        else if(typeCoeff == "0"){
+          attackTypeArray[4].push(typeName);
+        }
+      }
+      var attackTypeResult = "\n\n4배: " + attackTypeArray[0] + "\n2배: " + attackTypeArray[1] + "\n1배: " + attackTypeArray[2] + "\n0.5배: " + attackTypeArray[3] + "\n0배: " + attackTypeArray[4]
+
+      // 출력
+      var result = "이름: " + toSearch + "\n타입: " + pokemonType + attackTypeResult;
+      replier.reply(result);
+
+    } catch (error) {
+      replier.reply("🤔 검색하지 못했습니다.");
+    }
+  }
 
   // 기본 틀
   /*
