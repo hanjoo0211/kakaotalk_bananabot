@@ -46,7 +46,6 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
   \n\n?롤충 <소환사명>\n롤 전적검색 텍스트\
   \n\n?네이버 <검색대상>\n네이버에서 검색합니다.\
   \n\n?구글 <검색대상>\n구글에서 검색합니다.\
-  \n\n?짤 <검색대상>\n구글에서 검색해서 랜덤 이미지 링크를 출력합니다.\
   \n\n?나무위키 <검색대상>\n나무위키에서 검색합니다.\
   \n\n?위키 <검색대상>\n구글 검색을 통해 나무위키에서 검색한 내용의 첫 문단을 그대로 출력합니다.\
   \n\n?유튜브 <검색대상>\n유튜브에서 검색합니다.\
@@ -616,6 +615,7 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
   }
 
   // 구글 이미지 검색
+  /*
   if (msg.indexOf("?짤 ") == 0) {
     try {
       var toSearch = msg.replace(/\?짤 /, "");
@@ -631,6 +631,7 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
       replier.reply("검색하지 못했습니다.");
     }
   }
+  */
 
   // 기본 틀
   /*
