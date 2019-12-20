@@ -650,12 +650,12 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
       var pokemonType = String(pokemonTypeData).replace(/타입 포켓몬,/g,"").replace(/,/,", ");
 
       // 방어 상성
-      var attackType = pokemonWikiText.match(/\S+ (\d|0.5)+×/g);
-      var attackTypeArray = new Array(Array(), Array(), Array(), Array(), Array());
+      var attackType = pokemonWikiText.match(/\S+ (\d|0.5|0.25)+×/g);
+      var attackTypeArray = new Array(Array(), Array(), Array(), Array(), Array(), Array());
 
       for(var i=0; i<18; i++){
         var typeName = String(attackType[i].match(/[가-힣]+ /)).replace(/ /,"");
-        var typeCoeff = attackType[i].match(/ (\d|0.5)×/)[1];
+        var typeCoeff = attackType[i].match(/ (\d|0.5|0.25)×/)[1];
         if(typeCoeff == "4"){
           attackTypeArray[0].push(typeName);
         }
@@ -668,11 +668,42 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
         else if(typeCoeff == "0.5"){
           attackTypeArray[3].push(typeName);
         }
-        else if(typeCoeff == "0"){
+        else if(typeCoeff == "0.25"){
           attackTypeArray[4].push(typeName);
         }
+        else if(typeCoeff == "0"){
+          attackTypeArray[5].push(typeName);
+        }
       }
-      var attackTypeResult = "\n\n4배: " + attackTypeArray[0] + "\n2배: " + attackTypeArray[1] + "\n1배: " + attackTypeArray[2] + "\n0.5배: " + attackTypeArray[3] + "\n0배: " + attackTypeArray[4]
+
+      var attackTypeResult = "\n"
+      for(var i=0; i<6; i++){
+        if(attackTypeArray[i].length){
+          switch(i){
+            case 0:
+              attackTypeResult += ("\n4배: " + attackTypeArray[i]);
+              break;
+            case 1:
+              attackTypeResult += ("\n2배: " + attackTypeArray[i]);
+              break;
+            case 2:
+              attackTypeResult += ("\n1배: " + attackTypeArray[i]);
+              break;
+            case 3:
+              attackTypeResult += ("\n0.5배: " + attackTypeArray[i]);
+              break;
+            case 4:
+              attackTypeResult += ("\n0.25배: " + attackTypeArray[i]);
+              break;
+            case 5:
+              attackTypeResult += ("\n0배: " + attackTypeArray[i]);
+              break;
+            default:
+              break;
+          
+          } 
+        }
+      }
 
       // 출력
       var result = "이름: " + toSearch + "\n타입: " + pokemonType + attackTypeResult;
