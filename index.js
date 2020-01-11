@@ -109,12 +109,12 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
     var pageNum = Math.floor(Math.random() * 1380 + 1);
 
     var ggoorrHtml = org.jsoup.Jsoup.connect("http://ggoorr.net/index.php?mid=ao&page=" + pageNum).get().html();
-    var ggoorrData = ggoorrHtml.match(/"https:\/\/ggoorr.net\/index.php\?mid=ao&amp;page=\d+&amp;document_srl=\d+"/g);
+    var ggoorrData = ggoorrHtml.match(/"\/index.php\?mid=ao&amp;page=\d+&amp;document_srl=\d+"/g);
     
     //data2 = data.split("리스트 상단 광고 끝")[1].split("BEST 게시물")[0].replace(/<[^>]+>/g,"").trim();
 
     var postNum = Math.floor(Math.random() * ggoorrData.length);
-    var ggoorrNum = ggoorrData[postNum].replace(/"https:\/\/ggoorr.net\/index.php\?mid=ao&amp;page=\d+&amp;document_srl=/,"").replace(/"/,"");
+    var ggoorrNum = ggoorrData[postNum].replace(/"\/index.php\?mid=ao&amp;page=\d+&amp;document_srl=/,"").replace(/"/,"");
 
     replier.reply("🔞 ㅗ..ㅗㅜㅑ..\n\nhttps://ggoorr.net/ao/" + ggoorrNum);
   }
@@ -381,7 +381,7 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
 
   // 네이버 실시간 검색순위
   if (msg == "?실검") {
-    var rankHtml = org.jsoup.Jsoup.connect("https://datalab.naver.com/keyword/realtimeList.naver?groupingLevel=0&marketing=-2&where=main").get().html();
+    var rankHtml = org.jsoup.Jsoup.connect("https://datalab.naver.com/keyword/realtimeList.naver?age=all&groupingLevel=0&marketing=-2&where=main").get().html();
     rankData = rankHtml.split("조회하기")[1].split("이용약관")[0].replace(/\d\d\d\d.\d\d\.\d\d/g, "").replace(/ . ~ . . ~ . /, "");
 
     var searchRank = new Array();
