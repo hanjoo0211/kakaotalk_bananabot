@@ -42,6 +42,7 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
   // 기능 알림
   if ((msg == "?바나나") || (msg == "?명령어")) {
     replier.reply("※명령어 목록 " + "\u200b".repeat(501) + "\
+    \n\n.(대화) 바나나봇과 대화합니다.\
   \n\n?롤 <소환사명>\n롤 전적검색 op.gg 링크\
   \n\n?롤충 <소환사명>\n롤 전적검색 텍스트\
   \n\n?네이버 <검색대상>\n네이버에서 검색합니다.\
@@ -106,15 +107,15 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
 
   // ㅗㅜㅑ
   if (msg == "?ㅗㅜㅑ") {
-    var pageNum = Math.floor(Math.random() * 1380 + 1);
+    var pageNum = Math.floor(Math.random() * 1420 + 1);
 
     var ggoorrHtml = org.jsoup.Jsoup.connect("http://ggoorr.net/index.php?mid=ao&page=" + pageNum).get().html();
     var ggoorrData = ggoorrHtml.match(/"\/index.php\?mid=ao&amp;page=\d+&amp;document_srl=\d+"/g);
-    
+
     //data2 = data.split("리스트 상단 광고 끝")[1].split("BEST 게시물")[0].replace(/<[^>]+>/g,"").trim();
 
     var postNum = Math.floor(Math.random() * ggoorrData.length);
-    var ggoorrNum = ggoorrData[postNum].replace(/"\/index.php\?mid=ao&amp;page=\d+&amp;document_srl=/,"").replace(/"/,"");
+    var ggoorrNum = ggoorrData[postNum].replace(/"\/index.php\?mid=ao&amp;page=\d+&amp;document_srl=/, "").replace(/"/, "");
 
     replier.reply("🔞 ㅗ..ㅗㅜㅑ..\n\nhttps://ggoorr.net/ao/" + ggoorrNum);
   }
@@ -388,7 +389,7 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
     var rankListData = rankData.match(/item_title">.+?<\/span>/g);
     var result = "";
     for (i = 0; i < 20; i++) {
-      searchRank.push(String(rankListData[i]).replace("item_title\">","").replace("</span>",""));
+      searchRank.push(String(rankListData[i]).replace("item_title\">", "").replace("</span>", ""));
       result = result + "\n" + String(i + 1) + " " + searchRank[i];
     }
 
@@ -450,11 +451,11 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
 
       // 페이지 랜덤
       var pageNum = Math.floor(Math.random() * pgEnd + 1);
-      
+
       if (isMgallery == "mgallery") {
         data = org.jsoup.Jsoup.connect("https://gall.dcinside.com/mgallery/board/lists/?id=" + dcId + "&page=" + pageNum + "&exception_mode=recommend").get().html();
       }
-      else{
+      else {
         data = org.jsoup.Jsoup.connect("https://gall.dcinside.com/board/lists/?id=" + dcId + "&page=" + pageNum + "&exception_mode=recommend").get().html();
       }
       data2 = data.match(/"gall_num">\d{1,7}/g);
@@ -464,7 +465,7 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
       if (isMgallery == "mgallery") {
         data3 = "gall.dcinside.com/mgallery/board/view/?id=" + dcId + "&no=" + String(data2[postNum]).replace(/"gall_num">/, ""); // 랜덤글 링크
       }
-      else{
+      else {
         data3 = "gall.dcinside.com/board/view/?id=" + dcId + "&no=" + String(data2[postNum]).replace(/"gall_num">/, "");
       }
 
@@ -494,8 +495,8 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
       // 나무위키 링크 생성
       var googleHtml = org.jsoup.Jsoup.connect(searchLink).get().html();
       var namuData = googleHtml.match(/namu\.wiki\/w\/.+" ping/);
-      var namuLink = "https://" + String(namuData).replace(/" ping/,"");
-      var namuRawLink = namuLink.replace(/\/w\//,"/raw/");
+      var namuLink = "https://" + String(namuData).replace(/" ping/, "");
+      var namuRawLink = namuLink.replace(/\/w\//, "/raw/");
 
       // 나무위키 제목/첫문단용 소스코드
       var namuHtml = org.jsoup.Jsoup.connect(namuLink).get().html();
@@ -503,41 +504,41 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
 
       // 문서 제목
       var namuTitleData = namuHtml.match(/<title>.+<\/title>/);
-      var namuTitle = String(namuTitleData).replace(/<title>/,"").replace(/<\/title>/,"").replace(/ - 나무위키/,"");
+      var namuTitle = String(namuTitleData).replace(/<title>/, "").replace(/<\/title>/, "").replace(/ - 나무위키/, "");
 
       // 문서 첫 문단
       var namuFirstTitle = namuRawHtml.split("==")[1].trim();
       var namuFirstContent = namuRawHtml.split("==")[2];
 
       // 나무위키 문법 다듬기
-      namuFirstContent = namuFirstContent.replace(/\[\[http.+?\|#*/g,""); // 링크 삭제
-      namuFirstContent = namuFirstContent.replace(/\[\[[^\]]+\|/g,""); // 링크와 텍스트가 다른 하이퍼링크 자르기
-      namuFirstContent = namuFirstContent.replace(/\[\[/g,"").replace(/\]\]/g,""); // 하이퍼링크 풀기
-      namuFirstContent = namuFirstContent.replace(/\[\*.+?\]/g,""); // 주석 삭제
-      namuFirstContent = namuFirstContent.replace(/~~.+?~~/g,"").replace(/--.+?--/g,""); // 취소선 삭제
-      namuFirstContent = namuFirstContent.replace(/'''/g,""); // 굵음 제거
-      namuFirstContent = namuFirstContent.replace(/\|[^\|]+\|/g,"").replace(/\|/g,""); // 표, 사진 등 삭제
-      namuFirstContent = namuFirstContent.replace(/\[br\]/g,"\n"); // 엔터 활성화
-      namuFirstContent = namuFirstContent.replace(/&\w+;/g,""); // 인용 제거
-      namuFirstContent = namuFirstContent.replace(/\[YouTube[^\]]+\]/gi,""); // 유튜브 제거
-      namuFirstContent = namuFirstContent.replace(/\[include.+?\]/g,""); // include 제거
-      namuFirstContent = namuFirstContent.replace(/{{{.\d/g,"").replace(/}}}/g,""); // 글자 크기 제거
-      namuFirstContent = namuFirstContent.replace(/width=\d+/g,"").replace(/height=\d+/g,""); // width, height 제거
+      namuFirstContent = namuFirstContent.replace(/\[\[http.+?\|#*/g, ""); // 링크 삭제
+      namuFirstContent = namuFirstContent.replace(/\[\[[^\]]+\|/g, ""); // 링크와 텍스트가 다른 하이퍼링크 자르기
+      namuFirstContent = namuFirstContent.replace(/\[\[/g, "").replace(/\]\]/g, ""); // 하이퍼링크 풀기
+      namuFirstContent = namuFirstContent.replace(/\[\*.+?\]/g, ""); // 주석 삭제
+      namuFirstContent = namuFirstContent.replace(/~~.+?~~/g, "").replace(/--.+?--/g, ""); // 취소선 삭제
+      namuFirstContent = namuFirstContent.replace(/'''/g, ""); // 굵음 제거
+      namuFirstContent = namuFirstContent.replace(/\|[^\|]+\|/g, "").replace(/\|/g, ""); // 표, 사진 등 삭제
+      namuFirstContent = namuFirstContent.replace(/\[br\]/g, "\n"); // 엔터 활성화
+      namuFirstContent = namuFirstContent.replace(/&\w+;/g, ""); // 인용 제거
+      namuFirstContent = namuFirstContent.replace(/\[YouTube[^\]]+\]/gi, ""); // 유튜브 제거
+      namuFirstContent = namuFirstContent.replace(/\[include.+?\]/g, ""); // include 제거
+      namuFirstContent = namuFirstContent.replace(/{{{.\d/g, "").replace(/}}}/g, ""); // 글자 크기 제거
+      namuFirstContent = namuFirstContent.replace(/width=\d+/g, "").replace(/height=\d+/g, ""); // width, height 제거
       namuFirstContent = namuFirstContent.trim();
 
       replier.reply("🔍 나무위키 '" + namuTitle + "' 검색 결과\n\n✔ " + namuFirstTitle + "\n\n" + namuFirstContent);
-    
-    }catch (error) {
+
+    } catch (error) {
       replier.reply("검색하지 못했습니다.");
     }
   }
 
   if ((msg.indexOf("?미세먼지") == 0) || (msg.indexOf("?미먼") == 0)) {
     try {
-      if((msg == "?미세먼지") || (msg == "?미먼")){
+      if ((msg == "?미세먼지") || (msg == "?미먼")) {
         var searchArea = "반포동";
       }
-      else{
+      else {
         var searchArea = msg.replace(/\?미세먼지 /, "").replace(/\?미먼 /, "");
       }
       var searchAreaUrl = searchArea.replace(/ /g, "%20");
@@ -548,64 +549,64 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
       var pm10Data = naverText.match(/에어코리아 미세먼지 현재\d+/);
       var pm25Data = naverText.match(/초미세먼지 [가-힣]+ \d+㎍\/㎥ 오존/);
 
-      var area = String(areaData).replace(/대기오염정보 /,"").replace(/ 대기오염/,"");
-      var pm10 = String(pm10Data).replace(/에어코리아 미세먼지 현재/,"");
-      var pm25 = String(pm25Data).replace(/초미세먼지 [가-힣]+ /,"").replace(/㎍\/㎥ 오존/,"");
+      var area = String(areaData).replace(/대기오염정보 /, "").replace(/ 대기오염/, "");
+      var pm10 = String(pm10Data).replace(/에어코리아 미세먼지 현재/, "");
+      var pm25 = String(pm25Data).replace(/초미세먼지 [가-힣]+ /, "").replace(/㎍\/㎥ 오존/, "");
 
       // 미세먼지 기준
-      if(pm10 > 150){
+      if (pm10 > 150) {
         pm10State = "최악🤮";
       }
-      else if(pm10 > 100){
+      else if (pm10 > 100) {
         pm10State = "매우 나쁨😷";
       }
-      else if(pm10 > 75){
+      else if (pm10 > 75) {
         pm10State = "상당히 나쁨😣";
       }
-      else if(pm10 > 50){
+      else if (pm10 > 50) {
         pm10State = "나쁨🙁";
       }
-      else if(pm10 > 40){
+      else if (pm10 > 40) {
         pm10State = "보통😑";
       }
-      else if(pm10 > 30){
+      else if (pm10 > 30) {
         pm10State = "양호🙂";
       }
-      else if(pm10 > 15){
+      else if (pm10 > 15) {
         pm10State = "좋음😄";
       }
-      else if(pm10 > 0){
+      else if (pm10 > 0) {
         pm10State = "최고 좋음😆";
       }
 
       // 초미세먼지 기준
-      if(pm25 > 75){
+      if (pm25 > 75) {
         pm25State = "최악🤮";
       }
-      else if(pm25 > 50){
+      else if (pm25 > 50) {
         pm25State = "매우 나쁨😷";
       }
-      else if(pm25 > 37){
+      else if (pm25 > 37) {
         pm25State = "상당히 나쁨😣";
       }
-      else if(pm25 > 25){
+      else if (pm25 > 25) {
         pm25State = "나쁨🙁";
       }
-      else if(pm25 > 20){
+      else if (pm25 > 20) {
         pm25State = "보통😑";
       }
-      else if(pm25 > 15){
+      else if (pm25 > 15) {
         pm25State = "양호🙂";
       }
-      else if(pm25 > 8){
+      else if (pm25 > 8) {
         pm25State = "좋음😄";
       }
-      else if(pm25 > 0){
+      else if (pm25 > 0) {
         pm25State = "최고 좋음😆";
       }
-      
-      var toReply = "🌁 '" + area + "' 미세먼지 정보입니다.\n\n미세먼지: " + pm10 + "㎍/㎥ " + pm10State + "\n초미세먼지: "+ pm25 + "㎍/㎥ " + pm25State;
-      if(pm10 == "null"){
+
+      var toReply = "🌁 '" + area + "' 미세먼지 정보입니다.\n\n미세먼지: " + pm10 + "㎍/㎥ " + pm10State + "\n초미세먼지: " + pm25 + "㎍/㎥ " + pm25State;
+      if (pm10 == "null") {
         toReply = "🤔 해당 지역을 검색하지 못했어요. 더 자세히 검색해보는건 어떨까요?\n\nex) 안암동, 용현1동, 을왕리";
       }
 
@@ -647,39 +648,39 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
 
       // 포켓몬 타입
       var pokemonTypeData = pokemonWikiText.match(/\S+타입 포켓몬,/g);
-      var pokemonType = String(pokemonTypeData).replace(/타입 포켓몬,/g,"").replace(/,/,", ");
+      var pokemonType = String(pokemonTypeData).replace(/타입 포켓몬,/g, "").replace(/,/, ", ");
 
       // 방어 상성
       var attackType = pokemonWikiText.match(/\S+ (\d|0.5|0.25)+×/g);
       var attackTypeArray = new Array(Array(), Array(), Array(), Array(), Array(), Array());
 
-      for(var i=0; i<18; i++){
-        var typeName = String(attackType[i].match(/[가-힣]+ /)).replace(/ /,"");
+      for (var i = 0; i < 18; i++) {
+        var typeName = String(attackType[i].match(/[가-힣]+ /)).replace(/ /, "");
         var typeCoeff = attackType[i].match(/ (\d|0.5|0.25)×/)[1];
-        if(typeCoeff == "4"){
+        if (typeCoeff == "4") {
           attackTypeArray[0].push(typeName);
         }
-        else if(typeCoeff == "2"){
+        else if (typeCoeff == "2") {
           attackTypeArray[1].push(typeName);
         }
-        else if(typeCoeff == "1"){
+        else if (typeCoeff == "1") {
           attackTypeArray[2].push(typeName);
         }
-        else if(typeCoeff == "0.5"){
+        else if (typeCoeff == "0.5") {
           attackTypeArray[3].push(typeName);
         }
-        else if(typeCoeff == "0.25"){
+        else if (typeCoeff == "0.25") {
           attackTypeArray[4].push(typeName);
         }
-        else if(typeCoeff == "0"){
+        else if (typeCoeff == "0") {
           attackTypeArray[5].push(typeName);
         }
       }
 
       var attackTypeResult = "\n"
-      for(var i=0; i<6; i++){
-        if(attackTypeArray[i].length){
-          switch(i){
+      for (var i = 0; i < 6; i++) {
+        if (attackTypeArray[i].length) {
+          switch (i) {
             case 0:
               attackTypeResult += ("\n4배: " + attackTypeArray[i]);
               break;
@@ -700,8 +701,8 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
               break;
             default:
               break;
-          
-          } 
+
+          }
         }
       }
 
@@ -713,6 +714,52 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
       replier.reply("🤔 검색하지 못했습니다.");
     }
   }
+
+  // 핑퐁 대화
+  if (msg.indexOf(".") == 0) {
+    msg = msg.replace(/./,"");
+    let jsondata = { "request": { "query": msg } };
+
+    function send() {
+      try {
+        let url = new java.net.URL("https://builder.pingpong.us/api/builder/5e1a1c75e4b010b663d37764/integration/v0.2/custom/{sessionId}");
+        let con = url.openConnection();
+        con.setRequestMethod("POST"); // 서버 접속 방법을 설정하세요. GET, POST, OPTIONS 등..
+        con.setRequestProperty("Content-Type", "application/json; charset=utf-8"); // 서버 접속시 가져올 데이터의 형식을 지정
+        con.setRequestProperty("Authorization", "Basic " + "a2V5OjBlMDY2ZjJlZTUxNmZhY2JmZDFmMGQyMThmMDJkZjkz"); // 인증키 입력. 사이트에 따라 Basic 또는 Bearer 를 사용합니다.
+        con.setRequestProperty("User-Agent", "Mozilla"); // 일부 사이트의 경우 User-Agent 를 요구합니다.
+        con.setRequestProperty("Accpet", "*.*"); // 일부 사이트의 경우, 이 헤더가 없으면 오류가 발생합니다.
+        con.setDoOutput(true);
+        let wr = new java.io.DataOutputStream(con.getOutputStream());
+        let writer = new java.io.BufferedWriter(new java.io.OutputStreamWriter(wr, "UTF-8"));
+        writer.write(JSON.stringify(jsondata));
+        writer.close();
+        wr.close();
+
+        let responseCode = con.getResponseCode();
+        let br;
+        if (responseCode == 200) {
+          br = new java.io.BufferedReader(new java.io.InputStreamReader(con.getInputStream()));
+        } else {
+          br = new java.io.BufferedReader(new java.io.InputStreamReader(con.getErrorStream()));
+        }
+        let inputLine;
+        let response = "";
+        while ((inputLine = br.readLine()) != null) {
+          response += inputLine;
+        }
+        br.close();
+        return response;
+      } catch (e) {
+        return e;
+      }
+    }
+
+
+    let results = JSON.parse(send());
+    replier.reply(results['response']['replies'][0]['text']);
+  }
+
 
   // 기본 틀
   /*
@@ -785,11 +832,11 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
   if (msg.indexOf("돼지새끼") !== -1) {
     replier.reply(sender + " 돼지새끼");
   }
-  
+
   // 맞춤법 꼽주기
   if (msg.indexOf("됬") !== -1) {
     var toReply = ""
-    for(i=0; i<36; i++){
+    for (i = 0; i < 36; i++) {
       toReply += "됐"
     }
     replier.reply(toReply);
@@ -797,7 +844,7 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
 
   if (msg.indexOf("됌") !== -1) {
     var toReply = ""
-    for(i=0; i<36; i++){
+    for (i = 0; i < 36; i++) {
       toReply += "됨"
     }
     replier.reply(toReply);
@@ -805,7 +852,7 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
 
   if (msg.indexOf("됀") !== -1) {
     var toReply = ""
-    for(i=0; i<36; i++){
+    for (i = 0; i < 36; i++) {
       toReply += "된"
     }
     replier.reply(toReply);
@@ -815,7 +862,7 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
 }
 
 // 현재시간 함수
-function nowTime(){
+function nowTime() {
   // 현재시간
   var d = new Date();
   // 오전 오후 표시
@@ -831,29 +878,28 @@ function nowTime(){
 }
 
 // 조사 변환 함수
-function Josa(txt, josa)
-{
-	var code = txt.charCodeAt(txt.length-1) - 44032;
-	var cho = 19, jung = 21, jong=28;
-	var i1, i2, code1, code2;
+function Josa(txt, josa) {
+  var code = txt.charCodeAt(txt.length - 1) - 44032;
+  var cho = 19, jung = 21, jong = 28;
+  var i1, i2, code1, code2;
 
-	// 원본 문구가 없을때는 빈 문자열 반환
-	if (txt.length == 0) return '';
+  // 원본 문구가 없을때는 빈 문자열 반환
+  if (txt.length == 0) return '';
 
-	// 한글이 아닐때
-	if (code < 0 || code > 11171) return txt;
+  // 한글이 아닐때
+  if (code < 0 || code > 11171) return txt;
 
-	if (code % 28 == 0) return txt + Josa.get(josa, false);
-	else return txt + Josa.get(josa, true);
+  if (code % 28 == 0) return txt + Josa.get(josa, false);
+  else return txt + Josa.get(josa, true);
 }
 Josa.get = function (josa, jong) {
-	// jong : true면 받침있음, false면 받침없음
+  // jong : true면 받침있음, false면 받침없음
 
-	if (josa == '을' || josa == '를') return (jong?'을':'를');
-	if (josa == '이' || josa == '가') return (jong?'이':'가');
-	if (josa == '은' || josa == '는') return (jong?'은':'는');
-	if (josa == '와' || josa == '과') return (jong?'와':'과');
+  if (josa == '을' || josa == '를') return (jong ? '을' : '를');
+  if (josa == '이' || josa == '가') return (jong ? '이' : '가');
+  if (josa == '은' || josa == '는') return (jong ? '은' : '는');
+  if (josa == '와' || josa == '과') return (jong ? '와' : '과');
 
-	// 알 수 없는 조사
-	return '**';
+  // 알 수 없는 조사
+  return '**';
 }
