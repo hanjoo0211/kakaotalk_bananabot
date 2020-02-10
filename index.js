@@ -66,6 +66,7 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
   \n\n?한국시간\n한국의 현재 시각을 알려드립니다.\
   \n\n?이현시간\n이현의 현재 시각을 알려드립니다.\
   \n\n?푸키먼 <검색대상>\n해당 포켓몬의 타입과 방어상성을 알려드립니다.\
+  \n\n?롤챔스 2020 롤챔스 스프링 정보\
   \n\n?ㅗㅜㅑ\n🔞 ㅗ..ㅗㅜㅑ..");
   }
 
@@ -87,7 +88,7 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
   }
 
   // 이현 시간
-  if (msg == "?이현시간") {
+  if ((msg == "?이현시간") || (msg == "?미국시간")) {
     var d = new Date();
     var hyunTime = d.getTime() - 50400000;
     d.setTime(hyunTime);
@@ -382,7 +383,7 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
 
   // 네이버 실시간 검색순위
   if (msg == "?실검") {
-    var rankHtml = org.jsoup.Jsoup.connect("https://datalab.naver.com/keyword/realtimeList.naver?age=all&groupingLevel=0&marketing=-2&where=main").get().html();
+    var rankHtml = org.jsoup.Jsoup.connect("https://datalab.naver.com/keyword/realtimeList.naver?age=all&entertainment=0&groupingLevel=0&marketing=-2&news=0&sports=0").get().html();
     rankData = rankHtml.split("조회하기")[1].split("이용약관")[0].replace(/\d\d\d\d.\d\d\.\d\d/g, "").replace(/ . ~ . . ~ . /, "");
 
     var searchRank = new Array();
@@ -760,6 +761,59 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
     replier.reply(results['response']['replies'][0]['text']);
   }
 
+
+  // 롤챔스
+  if (msg.indexOf("?롤챔스") == 0) {
+    try {
+      var toSearch = msg.replace(/\?롤챔스 /, "");
+      switch(toSearch){
+        case "순위":
+          var rankHtml = org.jsoup.Jsoup.connect("https://namu.wiki/w/%ED%8B%80:2020%20%EC%9A%B0%EB%A6%AC%EC%9D%80%ED%96%89%20LoL%20Champions%20Korea%20Spring%20%EC%A0%95%EA%B7%9C%EC%8B%9C%EC%A6%8C%20%EC%88%9C%EC%9C%84%ED%91%9C").get().html().split("비고")[1].split("보라색")[0];
+          var teamHtmlArray = rankHtml.split("</tr>"); // 1~10번 배열에 팀 하나씩
+
+          var toReply = "2020 롤챔스 스프링 순위\n";
+          for(i = 1; i <= 10; i++){
+            var teamData = teamHtmlArray[i].split("</td>"); // 0번 순위, 2번 팀명, 3번 승, 4번 패, 5번 세트 득실, 6번 득실차, 7번 연속, 8번 비고
+
+            toReply += "\n";
+
+            toReply += teamData[0].replace(/<[^>]+>/g,"").trim(); // 순위
+            toReply += " | ";
+
+            teamName = teamData[2].replace(/<[^>]+>/g,"").trim(); // 팀명
+            toReply += teamName;
+            if(teamName.length == 2){
+              toReply += "     | "
+            }
+            else if(teamName == "DWG"){
+              toReply += " | "
+            }
+            else{
+              toReply += "  | "
+            }            
+
+            toReply += teamData[3].replace(/<[^>]+>/g,"").trim(); // 승
+            toReply += "승 ";
+
+            toReply += teamData[4].replace(/<[^>]+>/g,"").trim(); // 패
+            toReply += "패 ";
+
+            toReply += teamData[6].replace(/<[^>]+>/g,"").trim(); // 득실차
+            toReply += " ";
+          }
+
+          replier.reply(toReply);
+          break;
+        default:
+          replier.reply("2020 롤챔스 스프링 관련 명령어업니다.\n다음과 같이 입력해 주세요.\n\n?롤챔스 순위");
+          break;
+
+      }
+
+    } catch (error) {
+      replier.reply("오류가 발생했습니다.");
+    }
+  }
 
   // 기본 틀
   /*
