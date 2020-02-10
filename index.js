@@ -808,6 +808,43 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
           replier.reply(toReply);
           break;
         case "일정":
+          var scheduleHtml = org.jsoup.Jsoup.connect("https://namu.wiki/go/롤챔스%20현재%20경기").get().html().split("위키위키")[0];
+          var gameNumberData = scheduleHtml.match(/\d+경기 \(2020. \d+. \d+\)/g);
+
+          var gameNumber = new Array();
+          var gameNumberLength = 0;
+          for(i = 0; i < gameNumberData.length; i++){
+            gameNumber[i] = gameNumberData[i].replace(/\(2020. \d+. \d+\)/,"");            
+          }
+
+          var toReply = "롤챔스 이번 주 일정입니다.";
+          var gameData = new Array();
+          for(i = 0; i < gameNumber.length; i++){
+            switch(i){
+              case 0:
+                toReply += "\n\n== 수요일 ==";
+                break;
+              case 2:
+                toReply += "\n\n== 목요일 ==";
+                break;
+              case 4:
+                toReply += "\n\n== 금요일 ==";
+                break;
+              case 6:
+                toReply += "\n\n== 토요일 ==";
+                break;
+              case 8:
+                toReply += "\n\n== 일요일 ==";
+                break;
+              default:
+                break;
+            }
+            gameData[i] = scheduleHtml.split(gameNumber[i])[1].split("</span")[0];
+            toReply += "\n" + gameNumber[i] + gameData[i];
+          }
+
+          replier.reply(toReply);
+          break;
         case "오늘":
           var today = new Date();
           var todayDate = (today.getMonth() + 1) + ". " + today.getDate();
@@ -826,7 +863,7 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
             }
           }
 
-          var toReply = "2020 롤챔스 스프링 " + (today.getMonth() + 1) + "월 " + today.getDate() + "일 일정입니다.\n";
+          var toReply = (today.getMonth() + 1) + "월 " + today.getDate() + "일 롤챔스 일정입니다.\n";
           if(isTodayGame == false){
             toReply += "\n오늘 경기는 없습니다.";
           }
@@ -856,7 +893,7 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
             }
           }
 
-          var toReply = "2020 롤챔스 스프링 " + (today.getMonth() + 1) + "월 " + (today.getDate() + 1) + "일 일정입니다.\n";
+          var toReply = (today.getMonth() + 1) + "월 " + (today.getDate() + 1) + "일 롤챔스 일정입니다.\n";
           if(isTodayGame == false){
             toReply += "\n내일 경기는 없습니다.";
           }
