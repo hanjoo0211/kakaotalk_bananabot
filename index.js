@@ -66,7 +66,7 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
   \n\n?한국시간\n한국의 현재 시각을 알려드립니다.\
   \n\n?이현시간\n이현의 현재 시각을 알려드립니다.\
   \n\n?푸키먼 <검색대상>\n해당 포켓몬의 타입과 방어상성을 알려드립니다.\
-  \n\n?롤챔스 2020 롤챔스 스프링 정보\
+  \n\n?롤챔스 \n2020 롤챔스 스프링 정보를 알려드립니다.\
   \n\n?ㅗㅜㅑ\n🔞 ㅗ..ㅗㅜㅑ..");
   }
 
@@ -799,13 +799,77 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
             toReply += "패 ";
 
             toReply += teamData[6].replace(/<[^>]+>/g,"").trim(); // 득실차
-            toReply += " ";
+            toReply += " (";
+
+            toReply += teamData[7].replace(/<[^>]+>/g,"").trim(); // 연속
+            toReply += ")";
+          }
+
+          replier.reply(toReply);
+          break;
+        case "일정":
+        case "오늘":
+          var today = new Date();
+          var todayDate = (today.getMonth() + 1) + ". " + today.getDate();
+
+          var scheduleHtml = org.jsoup.Jsoup.connect("https://namu.wiki/go/롤챔스%20현재%20경기").get().html().split("위키위키")[0];
+          var gameNumberData = scheduleHtml.match(/\d+경기 \(2020. \d+. \d+\)/g);
+
+          var gameNumber = new Array();
+          var gameNumberLength = 0;
+          var isTodayGame = false;
+          for(i = 0; i < gameNumberData.length; i++){
+            if(gameNumberData[i].match(todayDate) == todayDate){
+              gameNumber[gameNumberLength] = gameNumberData[i].replace(/\(2020. \d+. \d+\)/,"");
+              gameNumberLength += 1;
+              isTodayGame = true;
+            }
+          }
+
+          var toReply = "2020 롤챔스 스프링 " + (today.getMonth() + 1) + "월 " + today.getDate() + "일 일정입니다.\n";
+          if(isTodayGame == false){
+            toReply += "\n오늘 경기는 없습니다.";
+          }
+          var gameData = new Array();
+          for(i = 0; i < gameNumber.length; i++){
+            gameData[i] = scheduleHtml.split(gameNumber[i])[1].split("</span")[0];
+            toReply += "\n" + gameNumber[i] + gameData[i];
+          }
+
+          replier.reply(toReply);
+          break;
+        case "내일":
+          var today = new Date();
+          var todayDate = (today.getMonth() + 1) + ". " + (today.getDate() + 1);
+
+          var scheduleHtml = org.jsoup.Jsoup.connect("https://namu.wiki/go/롤챔스%20현재%20경기").get().html().split("위키위키")[0];
+          var gameNumberData = scheduleHtml.match(/\d+경기 \(2020. \d+. \d+\)/g);
+
+          var gameNumber = new Array();
+          var gameNumberLength = 0;
+          var isTodayGame = false;
+          for(i = 0; i < gameNumberData.length; i++){
+            if(gameNumberData[i].match(todayDate) == todayDate){
+              gameNumber[gameNumberLength] = gameNumberData[i].replace(/\(2020. \d+. \d+\)/,"");
+              gameNumberLength += 1;
+              isTodayGame = true;
+            }
+          }
+
+          var toReply = "2020 롤챔스 스프링 " + (today.getMonth() + 1) + "월 " + (today.getDate() + 1) + "일 일정입니다.\n";
+          if(isTodayGame == false){
+            toReply += "\n내일 경기는 없습니다.";
+          }
+          var gameData = new Array();
+          for(i = 0; i < gameNumber.length; i++){
+            gameData[i] = scheduleHtml.split(gameNumber[i])[1].split("</span")[0];
+            toReply += "\n" + gameNumber[i] + gameData[i];
           }
 
           replier.reply(toReply);
           break;
         default:
-          replier.reply("2020 롤챔스 스프링 관련 명령어업니다.\n다음과 같이 입력해 주세요.\n\n?롤챔스 순위");
+          replier.reply("2020 롤챔스 스프링 관련 명령어업니다.\n다음과 같이 입력해 주세요.\n\n?롤챔스 순위\n?롤챔스 일정\n?롤챔스 오늘\n?롤챔스 내일");
           break;
 
       }
