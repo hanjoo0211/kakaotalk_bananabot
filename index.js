@@ -847,6 +847,10 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
           break;
         case "오늘":
           var today = new Date();
+          var todayDay = today.getDate()
+          if(todayDay < 10){
+            todayDay = "0" + todayDay;
+          }
           var todayDate = (today.getMonth() + 1) + ". " + today.getDate();
 
           var scheduleHtml = org.jsoup.Jsoup.connect("https://namu.wiki/go/롤챔스%20현재%20경기").get().html().split("위키위키")[0];
@@ -876,25 +880,29 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
           replier.reply(toReply);
           break;
         case "내일":
-          var today = new Date();
-          var todayDate = (today.getMonth() + 1) + ". " + (today.getDate() + 1);
+          var tomorrow = new Date();
+          var tomorrowDay = tomorrow.getDate() + 1;
+          if(tomorrowDay < 10){
+            tomorrowDay = "0" + tomorrowDay;
+          }
+          var tomorrowDate = (tomorrow.getMonth() + 1) + ". " + tomorrowDay;
 
           var scheduleHtml = org.jsoup.Jsoup.connect("https://namu.wiki/go/롤챔스%20현재%20경기").get().html().split("위키위키")[0];
           var gameNumberData = scheduleHtml.match(/\d+경기 \(2020. \d+. \d+\)/g);
 
           var gameNumber = new Array();
           var gameNumberLength = 0;
-          var isTodayGame = false;
+          var isTomorrowGame = false;
           for(i = 0; i < gameNumberData.length; i++){
-            if(gameNumberData[i].match(todayDate) == todayDate){
+            if(gameNumberData[i].match(tomorrowDate) == tomorrowDate){
               gameNumber[gameNumberLength] = gameNumberData[i].replace(/\(2020. \d+. \d+\)/,"");
               gameNumberLength += 1;
-              isTodayGame = true;
+              isTomorrowGame = true;
             }
           }
 
-          var toReply = (today.getMonth() + 1) + "월 " + (today.getDate() + 1) + "일 롤챔스 일정입니다.\n";
-          if(isTodayGame == false){
+          var toReply = (tomorrow.getMonth() + 1) + "월 " + (tomorrow.getDate() + 1) + "일 롤챔스 일정입니다.\n";
+          if(isTomorrowGame == false){
             toReply += "\n내일 경기는 없습니다.";
           }
           var gameData = new Array();
@@ -913,6 +921,47 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
 
     } catch (error) {
       replier.reply("오류가 발생했습니다.");
+    }
+  }
+
+  if ((msg == "?코로나") || (msg == "?문재앙")) {
+    try {
+    var coronaHtml = org.jsoup.Jsoup.connect("https://wuhanvirus.kr/").get().html();
+    var coronaKRHtml = String(coronaHtml.match(/\{[^\}]+?"한국🇰🇷"\}/));
+
+    var candidate = String(coronaKRHtml.match(/"candidate":\d+/)).replace(/"candidate":/,"");
+    var candidatePrev = String(coronaKRHtml.match(/"candidate_prev":\d+/)).replace(/"candidate_prev":/,"");
+    var death = String(coronaKRHtml.match(/"death":\d+/)).replace(/"death":/,"");
+    var deathPrev = String(coronaKRHtml.match(/"death_prev":\d+/)).replace(/"death_prev":/,"");
+    var infected = String(coronaKRHtml.match(/"infected":\d+/)).replace(/"infected":/,"");
+    var infectedPrev = String(coronaKRHtml.match(/"infected_prev":\d+/)).replace(/"infected_prev":/,"");
+    var negative = String(coronaKRHtml.match(/"negative":\d+/)).replace(/"negative":/,"");
+    var negativePrev = String(coronaKRHtml.match(/"negative_prev":\d+/)).replace(/"negative_prev":/,"");
+    var released = String(coronaKRHtml.match(/"released":\d+/)).replace(/"released":/,"");
+    var releasedPrev = String(coronaKRHtml.match(/"released_prev":\d+/)).replace(/"released_prev":/,"");
+    var tested = String(coronaKRHtml.match(/"tested":\d+/)).replace(/"tested":/,"");
+
+    var change = new Array();
+    change[0] = candidate - candidatePrev;
+    change[1] = death - deathPrev;
+    change[2] = infected - infectedPrev;
+    change[3] = negative - negativePrev;
+    change[4] = released - releasedPrev;
+    for(i = 0; i < 5; i++){
+      if(change[i] == 0){
+        change[i] = "-";
+      }
+      else{
+        change[i] = "+" + change[i];
+      }
+    }
+
+    var toReply = "😷 대한민국 코로나19 현황\n\n확진자 " + infected + " (" + change[2] + ")\n사망자 " + death + " (" + change[1] + ")\n격리해제 " + released + " (" + change[4] + ")\n의심환자 " + candidate + " (" + change[0] + ")\n결과음성 " + negative + " (" + change[3] + ")";
+    
+
+    replier.reply(toReply);
+    } catch (error) {
+      replier.reply("오류가 발생했습니다. 다시 시도해주세요.");
     }
   }
 
