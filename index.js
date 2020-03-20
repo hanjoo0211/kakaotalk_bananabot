@@ -67,6 +67,7 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
   \n\n?이현시간\n이현의 현재 시각을 알려드립니다.\
   \n\n?푸키먼 <검색대상>\n해당 포켓몬의 타입과 방어상성을 알려드립니다.\
   \n\n?롤챔스 \n2020 롤챔스 스프링 정보를 알려드립니다.\
+  \n\n?코로나 \n코로나바이러스19 대한민국 현황을 알려드립니다.\
   \n\n?ㅗㅜㅑ\n🔞 ㅗ..ㅗㅜㅑ..");
   }
 
@@ -809,17 +810,22 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
           break;
         case "일정":
           var scheduleHtml = org.jsoup.Jsoup.connect("https://namu.wiki/go/롤챔스%20현재%20경기").get().html().split("위키위키")[0];
-          var gameNumberData = scheduleHtml.match(/\d+경기 \(2020. \d+. \d+\)/g);
+          var gameNumberData = scheduleHtml.match(/\d+경기 \(\d+. \d+. \d+\)/g);
 
           var gameNumber = new Array();
+          var gameDate = new Array();
           var gameNumberLength = 0;
           for(i = 0; i < gameNumberData.length; i++){
-            gameNumber[i] = gameNumberData[i].replace(/\(2020. \d+. \d+\)/,"");            
+            gameNumber[i] = gameNumberData[i].replace(/\(\d+. \d+. \d+\)/,"");     
+            gameDate[i] = gameNumberData[i].replace(/\d+경기 \(/,"").replace(/. /g,"-").replace(")","");
           }
 
-          var toReply = "롤챔스 이번 주 일정입니다.";
+          var toReply = "롤챔스 이번 주 일정입니다.\n";
           var gameData = new Array();
+          var toCompareDate = null;
+          
           for(i = 0; i < gameNumber.length; i++){
+            /*
             switch(i){
               case 0:
                 toReply += "\n\n== 수요일 ==";
@@ -839,11 +845,18 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
               default:
                 break;
             }
+            */
+
+            if(gameDate[i] != toCompareDate){
+              toReply += "\n\n== " + getInputDayLabel(gameDate[i]) + " ==";
+              toCompareDate = gameDate[i];
+            }
             gameData[i] = scheduleHtml.split(gameNumber[i])[1].split("</span")[0];
             toReply += "\n" + gameNumber[i] + gameData[i];
           }
 
           replier.reply(toReply);
+          replier.reply(scheduleHtml);
           break;
         case "오늘":
           var today = new Date();
@@ -851,17 +864,17 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
           if(todayDay < 10){
             todayDay = "0" + todayDay;
           }
-          var todayDate = (today.getMonth() + 1) + ". " + today.getDate();
+          var todayDate = (today.getMonth() + 1) + ". " + todayDay;
 
           var scheduleHtml = org.jsoup.Jsoup.connect("https://namu.wiki/go/롤챔스%20현재%20경기").get().html().split("위키위키")[0];
-          var gameNumberData = scheduleHtml.match(/\d+경기 \(2020. \d+. \d+\)/g);
+          var gameNumberData = scheduleHtml.match(/\d+경기 \(\d+. \d+. \d+\)/g);
 
           var gameNumber = new Array();
           var gameNumberLength = 0;
           var isTodayGame = false;
           for(i = 0; i < gameNumberData.length; i++){
             if(gameNumberData[i].match(todayDate) == todayDate){
-              gameNumber[gameNumberLength] = gameNumberData[i].replace(/\(2020. \d+. \d+\)/,"");
+              gameNumber[gameNumberLength] = gameNumberData[i].replace(/\(\d+. \d+. \d+\)/,"");
               gameNumberLength += 1;
               isTodayGame = true;
             }
@@ -888,14 +901,14 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
           var tomorrowDate = (tomorrow.getMonth() + 1) + ". " + tomorrowDay;
 
           var scheduleHtml = org.jsoup.Jsoup.connect("https://namu.wiki/go/롤챔스%20현재%20경기").get().html().split("위키위키")[0];
-          var gameNumberData = scheduleHtml.match(/\d+경기 \(2020. \d+. \d+\)/g);
+          var gameNumberData = scheduleHtml.match(/\d+경기 \(\d+. \d+. \d+\)/g);
 
           var gameNumber = new Array();
           var gameNumberLength = 0;
           var isTomorrowGame = false;
           for(i = 0; i < gameNumberData.length; i++){
             if(gameNumberData[i].match(tomorrowDate) == tomorrowDate){
-              gameNumber[gameNumberLength] = gameNumberData[i].replace(/\(2020. \d+. \d+\)/,"");
+              gameNumber[gameNumberLength] = gameNumberData[i].replace(/\(\d+. \d+. \d+\)/,"");
               gameNumberLength += 1;
               isTomorrowGame = true;
             }
@@ -926,8 +939,8 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
 
   if ((msg == "?코로나") || (msg == "?문재앙")) {
     try {
-    var coronaHtml = org.jsoup.Jsoup.connect("https://wuhanvirus.kr/").get().html();
-    var coronaKRHtml = String(coronaHtml.match(/\{[^\}]+?"한국🇰🇷"\}/));
+    var coronaHtml = org.jsoup.Jsoup.connect("https://coronaboard.kr/").get().html();
+    var coronaKRHtml = String(coronaHtml.match(/\{[^\}]+?"🇰🇷"\}/));
 
     var candidate = String(coronaKRHtml.match(/"candidate":\d+/)).replace(/"candidate":/,"");
     var candidatePrev = String(coronaKRHtml.match(/"candidate_prev":\d+/)).replace(/"candidate_prev":/,"");
@@ -1037,6 +1050,10 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
     replier.reply(sender + " 돼지새끼");
   }
 
+  if ((sender.indexOf("Lucas") !== -1) && (msg.match(/한.*주/))) {
+    replier.reply("좀 닥쳐");
+  }
+
   // 맞춤법 꼽주기
   if (msg.indexOf("됬") !== -1) {
     var toReply = ""
@@ -1062,6 +1079,14 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
     replier.reply(toReply);
   }
 
+  if (msg.indexOf("몇일") !== -1) {
+    var toReply = ""
+    for (i = 0; i < 36; i++) {
+      toReply += "며칠"
+    }
+    replier.reply(toReply);
+  }
+
 
 }
 
@@ -1079,6 +1104,17 @@ function nowTime() {
     hour -= 12;
   }
   return (d.getFullYear() + "년 " + (d.getMonth() + 1) + "월 " + d.getDate() + "일 " + ampm + hour + "시 " + d.getMinutes() + "분");
+}
+
+// 요일 출력 함수
+function getInputDayLabel(date) {
+    
+  var week = new Array('일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일');
+  
+  var today = new Date(date).getDay();
+  var todayLabel = week[today];
+  
+  return todayLabel;
 }
 
 // 조사 변환 함수
