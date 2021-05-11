@@ -57,7 +57,6 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
   \n\n#인별 <검색대상>\n인스타그램에서 해당 해시태그의 게시물 중 최근 게시물을 가져옵니다.\
   \n\n#랜덤인별 <검색대상>\n인스타그램에서 해당 해시태그의 게시물 중 랜덤 게시물을 가져옵니다.\
   \n\n?계산퀴즈\n덧셈 및 곱셈 퀴즈를 냅니다. 바로 맞춰주세요.\
-  \n\n?실검\n현재 네이버 실시간 급상승 검색어를 20위까지 알려드립니다.\
   \n\n?<디씨갤러리>갤\n해당 갤러리 개념글 중 랜덤 게시물을 가져옵니다.\n구글 검색을 통해 갤러리 약자도 검색 가능합니다.\n이전 갤러리, 마이너 갤러리까지 구현되어 있습니다.\
   \nex)\n?옃갤 - 걸그룹 여자친구 갤러리\n?닌텐도 스위치 갤 - 닌텐도 스위치 마이너 갤러리\
   \n\n?미세먼지/미먼 <검색지역>\n현재 미세먼지 상태를 알려드립니다.\
@@ -66,9 +65,8 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
   \n\n?한국시간\n한국의 현재 시각을 알려드립니다.\
   \n\n?이현시간\n이현의 현재 시각을 알려드립니다.\
   \n\n?푸키먼 <검색대상>\n해당 포켓몬의 타입과 방어상성을 알려드립니다.\
-  \n\n?롤챔스 \n2020 롤챔스 스프링 정보를 알려드립니다.\
-  \n\n?코로나 \n코로나바이러스19 대한민국 현황을 알려드립니다.\
-  \n\n?ㅗㅜㅑ\n🔞 ㅗ..ㅗㅜㅑ..");
+  \n\n?롤챔스 \n현재 진행되는 롤챔스 정보를 알려드립니다.\
+  \n\n?코로나 \n코로나바이러스19 대한민국 현황을 알려드립니다.");
   }
 
   // 한국 시간
@@ -182,10 +180,10 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
 
   // 한강 수온
   if (msg == "?한강") {
-    var data = Utils.getWebText("https://wpws.kr/hangang/");
-    data2 = data.split("현재 한강물의 온도는")[1].split("도")[0].replace(/<[^>]+>/g, "").trim();
+    var hangangAPI = Utils.getWebText("https://api.hangang.msub.kr/");
+    var waterTemp = hangangAPI.split("\"temp\":\"")[1].split("\",\"time")[0].replace(/<[^>]+>/g, "").trim();
 
-    replier.reply("🌡 지금 한강은 " + data2 + "도 입니다.");
+    replier.reply("🌡 지금 한강은 " + waterTemp + "도 입니다.");
   }
 
   // 나무위키
@@ -383,6 +381,7 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
   }
 
   // 네이버 실시간 검색순위
+  /*
   if (msg == "?실검") {
     var rankHtml = org.jsoup.Jsoup.connect("https://datalab.naver.com/keyword/realtimeList.naver?age=all&entertainment=0&groupingLevel=0&marketing=-2&news=0&sports=0").get().html();
     rankData = rankHtml.split("조회하기")[1].split("이용약관")[0].replace(/\d\d\d\d.\d\d\.\d\d/g, "").replace(/ . ~ . . ~ . /, "");
@@ -397,6 +396,7 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
 
     replier.reply("🔍 네이버 실시간 급상승 검색어\n" + nowTime() + "\n" + result);
   }
+  */
 
   // 옃갤 랜덤개념글
   /*
@@ -768,8 +768,17 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
     try {
       var toSearch = msg.replace(/\?롤챔스 /, "");
       switch(toSearch){
+        /*
         case "순위":
-          var rankHtml = org.jsoup.Jsoup.connect("https://namu.wiki/w/%ED%8B%80:2020%20%EC%9A%B0%EB%A6%AC%EC%9D%80%ED%96%89%20LoL%20Champions%20Korea%20Spring%20%EC%A0%95%EA%B7%9C%EC%8B%9C%EC%A6%8C%20%EC%88%9C%EC%9C%84%ED%91%9C").get().html().split("비고")[1].split("보라색")[0];
+          // 구글에 롤챔스 순위 나무위키 검색해서 현재 시즌 알아내기
+          var searchLink = "https://www.google.com/search?q=" + "롤챔스%20순위%20나무위키";
+          // 나무위키 링크 생성
+          var googleHtml = org.jsoup.Jsoup.connect(searchLink).get().html();
+          var namuData = googleHtml.match(/namu\.wiki\/w\/.+" ping/);
+          var namuLink = "https://" + String(namuData).replace(/" ping/, "");
+          var namuRawLink = namuLink.replace(/\/w\//, "/raw/");
+
+          var rankHtml = org.jsoup.Jsoup.connect(namuRawLink).get().html().split("비고")[1].split("보라색")[0];
           var teamHtmlArray = rankHtml.split("</tr>"); // 1~10번 배열에 팀 하나씩
 
           var toReply = "2020 롤챔스 스프링 순위\n";
@@ -808,6 +817,7 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
 
           replier.reply(toReply);
           break;
+          */
         case "일정":
           var scheduleHtml = org.jsoup.Jsoup.connect("https://namu.wiki/go/롤챔스%20현재%20경기").get().html().split("위키위키")[0];
           var gameNumberData = scheduleHtml.match(/\d+경기 \(\d+. \d+. \d+\)/g);
@@ -927,9 +937,8 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
           replier.reply(toReply);
           break;
         default:
-          replier.reply("2020 롤챔스 스프링 관련 명령어업니다.\n다음과 같이 입력해 주세요.\n\n?롤챔스 순위\n?롤챔스 일정\n?롤챔스 오늘\n?롤챔스 내일");
+          replier.reply("2020 롤챔스 스프링 관련 명령어업니다.\n다음과 같이 입력해 주세요.\n\n?롤챔스 일정\n?롤챔스 오늘\n?롤챔스 내일");
           break;
-
       }
 
     } catch (error) {
@@ -942,12 +951,12 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
     var coronaHtml = org.jsoup.Jsoup.connect("https://coronaboard.kr/").get().html();
     var coronaKRHtml = String(coronaHtml.match(/\{[^\}]+?"🇰🇷"\}/));
 
-    var candidate = String(coronaKRHtml.match(/"candidate":\d+/)).replace(/"candidate":/,"");
-    var candidatePrev = String(coronaKRHtml.match(/"candidate_prev":\d+/)).replace(/"candidate_prev":/,"");
+    var testing = String(coronaKRHtml.match(/"testing":\d+/)).replace(/"testing":/,"");
+    var testingPrev = String(coronaKRHtml.match(/"testing_prev":\d+/)).replace(/"testing_prev":/,"");
     var death = String(coronaKRHtml.match(/"death":\d+/)).replace(/"death":/,"");
     var deathPrev = String(coronaKRHtml.match(/"death_prev":\d+/)).replace(/"death_prev":/,"");
-    var infected = String(coronaKRHtml.match(/"infected":\d+/)).replace(/"infected":/,"");
-    var infectedPrev = String(coronaKRHtml.match(/"infected_prev":\d+/)).replace(/"infected_prev":/,"");
+    var confirmed = String(coronaKRHtml.match(/"confirmed":\d+/)).replace(/"confirmed":/,"");
+    var confirmedPrev = String(coronaKRHtml.match(/"confirmed_prev":\d+/)).replace(/"confirmed_prev":/,"");
     var negative = String(coronaKRHtml.match(/"negative":\d+/)).replace(/"negative":/,"");
     var negativePrev = String(coronaKRHtml.match(/"negative_prev":\d+/)).replace(/"negative_prev":/,"");
     var released = String(coronaKRHtml.match(/"released":\d+/)).replace(/"released":/,"");
@@ -955,9 +964,9 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
     var tested = String(coronaKRHtml.match(/"tested":\d+/)).replace(/"tested":/,"");
 
     var change = new Array();
-    change[0] = candidate - candidatePrev;
+    change[0] = testing - testingPrev;
     change[1] = death - deathPrev;
-    change[2] = infected - infectedPrev;
+    change[2] = confirmed - confirmedPrev;
     change[3] = negative - negativePrev;
     change[4] = released - releasedPrev;
     for(i = 0; i < 5; i++){
@@ -969,7 +978,7 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
       }
     }
 
-    var toReply = "😷 대한민국 코로나19 현황\n\n확진자 " + infected + " (" + change[2] + ")\n사망자 " + death + " (" + change[1] + ")\n격리해제 " + released + " (" + change[4] + ")\n의심환자 " + candidate + " (" + change[0] + ")\n결과음성 " + negative + " (" + change[3] + ")";
+    var toReply = "😷 대한민국 코로나19 현황\n\n확진자 " + confirmed + " (" + change[2] + ")\n사망자 " + death + " (" + change[1] + ")\n격리해제 " + released + " (" + change[4] + ")\n검사중 " + testing + " (" + change[0] + ")\n결과음성 " + negative + " (" + change[3] + ")";
     
 
     replier.reply(toReply);
